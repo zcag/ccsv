@@ -26,17 +26,17 @@ ccsv cut -c id -c 5 -c age some.csv`,
 	Args: cobra.MaximumNArgs(1),
 	PreRunE: util.ValidateArgOrPipe("no input provided or piped; usage: ccsv cut -c[col,] [file]"),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := processCSV(args, func(reader *csv.Reader, headers []string) error {
+		err := processCSV(args, func(reader *csv.Reader) error {
+			headers, err := reader.Read()
+			if err != nil { return err }
+
 			columns, err := util.ParseColumnFlag(columns_flag, headers)
 			if err != nil { return err }
 
 			writer := csv.NewWriter(os.Stdout)
 
+			record := headers
 			for {
-				record, err := reader.Read()
-				if err != nil && err.Error() == "EOF" { break }
-				if err != nil { return err }
-
 				outCells := make([]string, len(columns))
 				for i, col := range columns {
 					if col < len(record) { outCells[i] = record[col] } 
@@ -44,6 +44,10 @@ ccsv cut -c id -c 5 -c age some.csv`,
 
 				if err := writer.Write(outCells); err != nil { return err }
 				writer.Flush()
+
+				record, err = reader.Read()
+				if err != nil && err.Error() == "EOF" { break }
+				if err != nil { return err }
 			}
 
 			return nil
@@ -66,23 +70,17 @@ func init() {
 	cutCmd.MarkFlagRequired("columns")
 }
 
-func processCSV(args []string, callback func(reader *csv.Reader, headers []string) error) error {
+func processCSV(args []string, callback func(reader *csv.Reader) error) error {
 		var file *os.File
 
 		if util.IsPiped() {
 			file = os.Stdin
 		} else {
-			var err  error
+			var err error
 			file, err = os.Open(args[0])
 			if err != nil { return fmt.Errorf("Failed to open file: %s\n", err) }
 			defer file.Close()
 		}
 
-		headers, err := csv.NewReader(file).Read()
-		if err != nil { return fmt.Errorf("Failed to read the input: %s\n", err) }
-
-		file.Seek(0, io.SeekStart)
-		reader := csv.NewReader(file)
-
-		return callback(reader, headers)
+		return callback(csv.NewReader(file))
 }

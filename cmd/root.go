@@ -12,7 +12,10 @@ import (
 var rootCmd = &cobra.Command{
 	Use: "ccsv",
 	Short: "CLI tool for working with CSV files",
-	Long: "",
+	Long: `
+	ccsv [command] [opts] file.csv
+	cat file.csv | ccsv [command] [opts]
+	`,
 }
 
 func Execute() {
