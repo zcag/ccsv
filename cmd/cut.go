@@ -2,8 +2,6 @@ package cmd
 
 import (
 	"encoding/csv"
-	"fmt"
-	"io"
 	"os"
 
 	"github.com/cagdassalur/ccsv/util"
@@ -26,7 +24,7 @@ ccsv cut -c id -c 5 -c age some.csv`,
 	Args: cobra.MaximumNArgs(1),
 	PreRunE: util.ValidateArgOrPipe("no input provided or piped; usage: ccsv cut -c[col,] [file]"),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := processCSV(args, func(reader *csv.Reader) error {
+		err := util.ProcessCSV(args, func(reader *csv.Reader) error {
 			headers, err := reader.Read()
 			if err != nil { return err }
 
@@ -68,19 +66,4 @@ func init() {
 		"list of column names or indexes",
 	)
 	cutCmd.MarkFlagRequired("columns")
-}
-
-func processCSV(args []string, callback func(reader *csv.Reader) error) error {
-		var file *os.File
-
-		if util.IsPiped() {
-			file = os.Stdin
-		} else {
-			var err error
-			file, err = os.Open(args[0])
-			if err != nil { return fmt.Errorf("Failed to open file: %s\n", err) }
-			defer file.Close()
-		}
-
-		return callback(csv.NewReader(file))
 }
