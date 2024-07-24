@@ -3,7 +3,9 @@ package cmd
 import (
 	"encoding/csv"
 	"fmt"
+	"io"
 	"os"
+
 	"github.com/cagdassalur/ccsv/util"
 
 	"github.com/spf13/cobra"
@@ -17,14 +19,15 @@ var cutCmd = &cobra.Command{
 	Use: "cut -c [col] [file]",
 	Short: "Cuts a csv by given columns by index or name",
 	Long: `Cuts a csv by given columns by index or name
+
 ccsv cut -c 1 some.csv
 ccsv cut -c id some.csv
-ccsv cut -c id -c 5 -c name some.csv`,
+ccsv cut -c id -c 5 -c age some.csv`,
 	Args: cobra.MaximumNArgs(1),
 	PreRunE: util.ValidateArgOrPipe("no input provided or piped; usage: ccsv cut -c[col,] [file]"),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := processCSV(args, func(reader *csv.Reader) error {
-			columns, err := util.ParseColumnFlag(reader, columns_flag)
+		err := processCSV(args, func(reader *csv.Reader, headers []string) error {
+			columns, err := util.ParseColumnFlag(columns_flag, headers)
 			if err != nil { return err }
 
 			writer := csv.NewWriter(os.Stdout)
@@ -63,16 +66,23 @@ func init() {
 	cutCmd.MarkFlagRequired("columns")
 }
 
-func processCSV(args []string, callback func(reader *csv.Reader) error) error {
-		var reader *csv.Reader
+func processCSV(args []string, callback func(reader *csv.Reader, headers []string) error) error {
+		var file *os.File
+
 		if util.IsPiped() {
-			reader = csv.NewReader(os.Stdin)
+			file = os.Stdin
 		} else {
-			file, err := os.Open(args[0])
+			var err  error
+			file, err = os.Open(args[0])
 			if err != nil { return fmt.Errorf("Failed to open file: %s\n", err) }
 			defer file.Close()
-			reader = csv.NewReader(file)
 		}
 
-		return callback(reader)
+		headers, err := csv.NewReader(file).Read()
+		if err != nil { return fmt.Errorf("Failed to read the input: %s\n", err) }
+
+		file.Seek(0, io.SeekStart)
+		reader := csv.NewReader(file)
+
+		return callback(reader, headers)
 }
