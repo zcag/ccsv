@@ -27,6 +27,12 @@ type stat struct {
 	_min int
 	_max int
 	sum int
+
+	// finalized attrs
+	allUniq bool
+	uniq int
+	repeating int
+	mean float32
 }
 
 func addData(s *stat, cell string) {
@@ -66,25 +72,34 @@ func addNumberData(s *stat, cell int) {
 	s.sum += cell
 }
 
+func bakeStat(_ int, s *stat) {
+	s.uniq = len(s.uniqCounts)
+	s.allUniq = s.uniq == s.count
+	s.repeating = s.count - s.uniq
+	s.mean = float32(s.sum) / float32(s.count)
+}
 
-func printStat(_ int, s stat) {
-	fmt.Println("-------------------------")
-	fmt.Printf("Column: %s\n", s.name)
-	fmt.Printf("Type: %s\n", s._type)
-	fmt.Printf("Non-null values: %d\n", s.count)
-	fmt.Printf("Null values: %d\n", s.nullCount)
-	fmt.Printf("Uniq values: %d\n", len(s.uniqCounts))
-	fmt.Printf("Repeating values: %d\n", s.count - len(s.uniqCounts))
+func printStats(stats []stat) {
+	for _, s := range stats {
+		fmt.Println("-------------------------")
+		fmt.Printf("Column: %s\n", s.name)
+		fmt.Printf("Type: %s\n", s._type)
+		fmt.Printf("Non-null values: %d\n", s.count)
+		fmt.Printf("Null values: %d\n", s.nullCount)
+		fmt.Printf("Uniq values: %d\n", s.uniq)
+		fmt.Printf("Repeating values: %d\n", s.repeating)
 
-	if s._type == "string" || len(s.uniqCounts) == s.count {
-		fmt.Printf("Longest string length: %d\n", s.longestChar)
-	} else if s._type == "number" {
-		fmt.Printf("Min: %d\n", s._min)
-		fmt.Printf("Max: %d\n", s._max)
-		fmt.Printf("Mean: %2.f\n", float64(s.sum) / float64(s.count) )
-		fmt.Printf("Sum: %d\n", s.sum)
+		if s._type == "string" {
+			fmt.Printf("Longest string length: %d\n", s.longestChar)
+		} else if s._type == "number" || !s.allUniq {
+			fmt.Printf("Min: %d\n", s._min)
+			fmt.Printf("Max: %d\n", s._max)
+			fmt.Printf("Mean: %2.f\n", s.mean)
+			fmt.Printf("Sum: %d\n", s.sum)
+		}
 	}
 
+	fmt.Println()
 }
 
 var statCmd = &cobra.Command{
@@ -114,8 +129,7 @@ var statCmd = &cobra.Command{
 				}
 			}
 
-			for i, s := range stats { printStat(i, s) }
-			fmt.Println("")
+			printStats(stats)
 
 			return nil
 		})
