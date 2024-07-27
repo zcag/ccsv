@@ -14,14 +14,29 @@ import (
 var (
 	left_column string
 	right_column string
+	column_flag string
 )
 
 var diffCmd = &cobra.Command{
 	Use:   "diff",
 	Short: "Get diff of csv files based on specified columns, outputs uniq values of left side",
 	Long: `Get diff of csv files based on specified columns, outputs uniq values of left side 
+
 	ccsv diff -l 1 -r 4 left.csv right.csv
-	ccsv diff -l id -r id left.csv right.csv`,
+	ccsv diff -l id -r userid left.csv right.csv
+	ccsv diff -c id left.csv right.csv`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if column_flag == "" && (left_column == "" || right_column == "") {
+			return fmt.Errorf("You need to provide either -c for both columns or -l and -r for each column")
+		}
+
+		if column_flag != "" {
+			left_column = column_flag
+			right_column = column_flag
+		}
+
+		return nil
+	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		right_hashes, err := util.HashCSV(right_column, args[1])
 		if err != nil { return err }
@@ -61,15 +76,21 @@ func init() {
 		"left_column",
 		"l",
 		"",
-		"name or index to diff for left file",
+		"name or index of column to diff for left file",
 	)
 	diffCmd.Flags().StringVarP(
 		&right_column,
 		"right_column",
 		"r",
 		"",
-		"name or index to diff for right file",
+		"name or index of column to diff for right file",
 	)
-	diffCmd.MarkFlagRequired("left_column")
-	diffCmd.MarkFlagRequired("right_column")
+
+	diffCmd.Flags().StringVarP(
+		&column_flag,
+		"column",
+		"c",
+		"",
+		"name or index of column to diff for both files",
+	)
 }
