@@ -11,6 +11,8 @@ import (
 
 var (
 	no_headers bool
+	csv_out bool
+	json_out bool
 )
 
 type stat struct {
@@ -129,7 +131,13 @@ var statCmd = &cobra.Command{
 				}
 			}
 
-			printStats(stats)
+			if csv_out {
+				return fmt.Errorf("Not implemented")
+			} else if json_out {
+				return fmt.Errorf("Not implemented")
+			} else {
+				printStats(stats)
+			}
 
 			return nil
 		})
@@ -165,4 +173,7 @@ func init() {
 		false,
 		"Do not parse first row as headers",
 	)
+
+	statCmd.Flags().BoolVar(&csv_out, "csv", false, "Output as csv")
+	statCmd.Flags().BoolVar(&json_out, "json", false, "Output as json")
 }
