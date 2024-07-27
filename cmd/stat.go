@@ -107,6 +107,7 @@ func printStats(stats []stat) {
 var statCmd = &cobra.Command{
 	Use:   "stat",
 	Short: "Show stats by column",
+	PreRunE: util.ValidateArgOrPipe("no input provided or piped"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := util.ProcessCSV(args, func(reader *csv.Reader) error {
 
@@ -148,6 +149,7 @@ var statCmd = &cobra.Command{
 var headersCmd = &cobra.Command{
 	Use:   "headers",
 	Short: "Show headers and indexes",
+	PreRunE: util.ValidateArgOrPipe("no input provided or piped"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		err := util.ProcessCSV(args, func(reader *csv.Reader) error {
 			headers, err := reader.Read()
