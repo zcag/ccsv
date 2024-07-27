@@ -28,7 +28,7 @@ ccsv cut -c id -c 5 -c age some.csv`,
 			headers, err := reader.Read()
 			if err != nil { return err }
 
-			columns, err := util.ParseColumnFlag(columns_flag, headers)
+			columns, err := util.ParseColumnFlags(columns_flag, headers)
 			if err != nil { return err }
 
 			writer := csv.NewWriter(os.Stdout)
