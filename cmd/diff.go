@@ -26,6 +26,10 @@ var diffCmd = &cobra.Command{
 	ccsv diff -l id -r userid left.csv right.csv
 	ccsv diff -c id left.csv right.csv`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) < 2 {
+			return fmt.Errorf("diff command needs two csv files")
+		}
+
 		if column_flag == "" && (left_column == "" || right_column == "") {
 			return fmt.Errorf("You need to provide either -c for both columns or -l and -r for each column")
 		}
