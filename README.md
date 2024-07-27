@@ -1,36 +1,53 @@
-WIP CLI tool to work with CSV files.
+# CCSV
 
+CLI tool for working with CSV files. 
+Personal project for getting into golang.
+
+Only unique feature is to ability to diff csv files based on arbitrary columns.
+
+For the rest you're probably better off with [csvkit](https://csvkit.readthedocs.io/en/latest/)
+
+## Installation
 ```bash
-CLI tool for working with CSV files
-
-Usage:
-  ccsv [command]
-
-Available Commands:
-  completion  Generate the autocompletion script for the specified shell
-  cut         Cuts a csv by given columns by index or name
-  help        Help about any command
-
-Flags:
-  -h, --help     help for ccsv
-  -t, --toggle   Help message for toggle
-
-Use "ccsv [command] --help" for more information about a command.
+go install github.com/cagdassalur/ccsv@latest
 ```
 
-# ccsv cut
-```bash
-Cuts a csv by given columns by index or name
+## Usage
 
+Run `ccsv --help` or `ccsv [commmand] --help` for complete usage. 
+
+* All column flags can be either column index or header name
+* All commands except diff can work with piped csv input or from a positional file argument.
+
+### diff
+Provides a csv with unique rows from left side, filtered by an arbitrary column.
+
+```bash
+ccsv diff -l 1 -r 4 left.csv right.csv
+ccsv diff -l id -r user_id left.csv right.csv
+ccsv diff -c id left.csv right.csv
+```
+
+### headers
+List headers and their indexes of file
+
+```bash
+ccsv headers some.csv
+```
+
+### cut
+Filter csv to show specified columns
+
+```bash
 ccsv cut -c 1 some.csv
 ccsv cut -c id some.csv
-ccsv cut -c id -c 5 -c age some.csv
+cat some.csv | ccsv cut -c id -c 5 -c age
+```
 
-Usage:
-  ccsv cut -c [col] [file] [flags]
+### stat
+Show info about each column like data type, null count, uniq count, min/max/mean/summ
 
-Flags:
-  -c, --columns stringArray   list of column names or indexes
-  -h, --help                  help for cut
-
+```bash
+ccsv stat some.csv
+ccsv stat -H headerless.csv
 ```
