@@ -1,7 +1,16 @@
 # CCSV
 
-CLI tool for working with CSV files. 
+WIP CLI tool for working with csv files
+
 Personal project for getting into golang.
+
+## Features
+* Produce diff.csv based specific columns from 2 files
+* Cut some columns to output a smaller width csv file
+* Shows stats on csv file like data type, null count, min/max/mean/sum
+* Filter rows by applying regex pattern to given columns
+* Produce multiple csv files grouped by given column values
+* header-skip, header-restore for hassle free csv piping
 
 ## Installation
 ```bash
@@ -22,13 +31,6 @@ Provides a csv with unique rows from left side, filtered by an arbitrary column.
 ccsv diff -l 1 -r 4 left.csv right.csv
 ccsv diff -l id -r user_id left.csv right.csv
 ccsv diff -c id left.csv right.csv
-```
-
-### headers
-List headers and their indexes of file
-
-```bash
-ccsv headers some.csv
 ```
 
 ### cut
@@ -62,4 +64,14 @@ Filter rows by regex on specific columns
 ```bash
 ccsv match -c name '\w+_\d' some.csv
 cat some.csv | ccsv match -c email '.*@g?mail'
+```
+
+### group
+Create csv files grouped by specified column while preserving headers
+
+ex. from `customers.csv` you can get `TR_customers.csv, EU_customers.csv etc.`
+
+```bash
+ccsv group 'records_<country>' all_records.csv
+cat some.csv | ccsv group '<3>_records_grouped'`,
 ```
