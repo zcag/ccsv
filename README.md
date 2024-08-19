@@ -3,10 +3,6 @@
 CLI tool for working with CSV files. 
 Personal project for getting into golang.
 
-Only unique feature is to ability to diff csv files based on arbitrary columns.
-
-For the rest you're probably better off with [csvkit](https://csvkit.readthedocs.io/en/latest/)
-
 ## Installation
 ```bash
 go install github.com/cagdassalur/ccsv@latest
@@ -58,4 +54,12 @@ Strip headers and restore them later to easily work on csv files without touchin
 ```bash
 cat file.csv | ccsv header-skip | sort | ccsv header-restore
 cat file.csv | ccsv hs | sort | ccsv hr
+```
+
+### match
+Filter rows by regex on specific columns
+
+```bash
+ccsv match -c name '\w+_\d' some.csv
+cat some.csv | ccsv match -c email '.*@g?mail'
 ```
