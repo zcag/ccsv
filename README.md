@@ -51,3 +51,11 @@ Show info about each column like data type, null count, uniq count, min/max/mean
 ccsv stat some.csv
 ccsv stat -H headerless.csv
 ```
+
+### header-skip header-restore
+Strip headers and restore them later to easily work on csv files without touching header line
+
+```bash
+cat file.csv | ccsv header-skip | sort | ccsv header-restore
+cat file.csv | ccsv hs | sort | ccsv hr
+```
