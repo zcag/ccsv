@@ -14,7 +14,7 @@ Personal project for getting into golang.
 
 ## Installation
 ```bash
-go install github.com/cagdassalur/ccsv@latest
+go install github.com/zcag/ccsv@latest
 ```
 
 ## Usage
