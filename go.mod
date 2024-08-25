@@ -1,4 +1,4 @@
-module github.com/cagdassalur/ccsv
+module github.com/zcag/ccsv
 
 go 1.22.5
 

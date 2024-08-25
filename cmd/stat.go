@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/cagdassalur/ccsv/util"
+	"github.com/zcag/ccsv/util"
 	"github.com/spf13/cobra"
 )
 

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/cagdassalur/ccsv/cmd"
+import "github.com/zcag/ccsv/cmd"
 
 func main() {
 	cmd.Execute()
