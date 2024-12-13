@@ -5,6 +5,7 @@ import (
 	"bufio"
 	"io"
 	"os"
+	"fmt"
 
 	"github.com/spf13/cobra"
 )
@@ -47,7 +48,21 @@ var headerRestoreCmd = &cobra.Command{
 	},
 }
 
+var headerAddCmd = &cobra.Command{
+	Use:   "header-add",
+	Aliases: []string{"ha"},
+	Short: "Adds the headers previously saved to the input",
+	Long: `cat file.csv | ccsv ha id,name,age`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		fmt.Print(args[0])
+		fmt.Print("\n")
+		_, err := io.Copy(os.Stdout, os.Stdin)
+		return err
+	},
+}
+
 func init() {
 	rootCmd.AddCommand(headerSkipCmd)
 	rootCmd.AddCommand(headerRestoreCmd)
+	rootCmd.AddCommand(headerAddCmd)
 }
