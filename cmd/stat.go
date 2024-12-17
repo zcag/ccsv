@@ -109,9 +109,9 @@ var statCmd = &cobra.Command{
 	Short: "Show stats by column",
 	PreRunE: util.ValidateArgOrPipe("no input provided or piped"),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := util.ProcessCSV(args, func(reader *csv.Reader) error {
+		err := util.ProcessCSV([]rune(separator)[0], args, func(reader *csv.Reader) error {
 
-			var stats []stat 
+			var stats []stat
 
 			for row_i := 0; true; row_i++ {
 				record, err := reader.Read()
@@ -119,10 +119,10 @@ var statCmd = &cobra.Command{
 				if err != nil { return err }
 
 				for col_i, cell := range record {
-					if row_i == 0 { 
-						if !no_headers { 
+					if row_i == 0 {
+						if !no_headers {
 							stats = append(stats, stat{name: cell})
-							continue 
+							continue
 						}
 
 						stats = append(stats, stat{name: fmt.Sprintf("%d", col_i)})
@@ -151,7 +151,7 @@ var headersCmd = &cobra.Command{
 	Short: "Show headers and indexes",
 	PreRunE: util.ValidateArgOrPipe("no input provided or piped"),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := util.ProcessCSV(args, func(reader *csv.Reader) error {
+		err := util.ProcessCSV([]rune(separator)[0], args, func(reader *csv.Reader) error {
 			headers, err := reader.Read()
 			if err != nil { return err }
 

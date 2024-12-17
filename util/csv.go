@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func ProcessCSV(args []string, callback func(reader *csv.Reader) error) error {
+func ProcessCSV(seperator rune, args []string, callback func(reader *csv.Reader) error) error {
 		var file *os.File
 
 		if IsPiped() {
@@ -18,7 +18,9 @@ func ProcessCSV(args []string, callback func(reader *csv.Reader) error) error {
 			defer file.Close()
 		}
 
-		return callback(csv.NewReader(file))
+		reader := csv.NewReader(file)
+		reader.Comma = seperator
+		return callback(reader)
 }
 
 func HashCSV(column string, path string) ([]uint32, error) {

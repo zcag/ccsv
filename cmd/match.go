@@ -23,7 +23,7 @@ var matchCmd = &cobra.Command{
 	PreRunE: util.ValidateArgOrPipe("no input provided or piped; usage: ccsv cut -c[col,] [file]"),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		pattern := args[0]
-		err := util.ProcessCSV(args[1:], func(reader *csv.Reader) error {
+		err := util.ProcessCSV([]rune(separator)[0], args[1:], func(reader *csv.Reader) error {
 			headers, err := reader.Read()
 			if err != nil { return err }
 

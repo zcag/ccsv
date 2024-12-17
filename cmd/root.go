@@ -9,6 +9,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+    separator string
+)
+
 var rootCmd = &cobra.Command{
 	Use: "ccsv",
 	Short: "CLI tool for working with CSV files",
@@ -24,5 +28,5 @@ func Execute() {
 }
 
 func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.PersistentFlags().StringVar(&separator, "sep", ",", "CSV separator character")
 }

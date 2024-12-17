@@ -24,7 +24,7 @@ ccsv cut -c id -c 5 -c age some.csv`,
 	Args: cobra.MaximumNArgs(1),
 	PreRunE: util.ValidateArgOrPipe("no input provided or piped; usage: ccsv cut -c[col,] [file]"),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		err := util.ProcessCSV(args, func(reader *csv.Reader) error {
+		err := util.ProcessCSV([]rune(separator)[0], args, func(reader *csv.Reader) error {
 			headers, err := reader.Read()
 			if err != nil { return err }
 
@@ -37,7 +37,7 @@ ccsv cut -c id -c 5 -c age some.csv`,
 			for {
 				outCells := make([]string, len(columns))
 				for i, col := range columns {
-					if col < len(record) { outCells[i] = record[col] } 
+					if col < len(record) { outCells[i] = record[col] }
 				}
 
 				if err := writer.Write(outCells); err != nil { return err }
