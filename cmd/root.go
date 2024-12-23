@@ -28,5 +28,10 @@ func Execute() {
 }
 
 func init() {
+	defaultSep := os.Getenv("CCSV_DEFAULT_SEPERATOR")
+	if defaultSep == "" {
+		defaultSep = ","
+	}
+
 	rootCmd.PersistentFlags().StringVar(&separator, "sep", ",", "CSV separator character")
 }
