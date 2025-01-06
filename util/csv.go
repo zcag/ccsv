@@ -23,11 +23,12 @@ func ProcessCSV(seperator rune, args []string, callback func(reader *csv.Reader)
 		return callback(reader)
 }
 
-func HashCSV(column string, path string) ([]uint32, error) {
+func HashCSV(separator rune, column string, path string) ([]uint32, error) {
 	file, err := os.Open(path)
 	if err != nil { return nil, fmt.Errorf("Failed to open file: %s\n", err) }
 	defer file.Close()
 	reader := csv.NewReader(file)
+	reader.Comma = separator
 
 	headers, err := reader.Read()
 	if err != nil { return nil, err }

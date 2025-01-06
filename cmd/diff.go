@@ -46,13 +46,14 @@ var diffCmd = &cobra.Command{
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		right_hashes, err := util.HashCSV(right_column, args[1])
+		right_hashes, err := util.HashCSV([]rune(separator)[0], right_column, args[1])
 		if err != nil { return err }
 
 		file, err := os.Open(args[0])
 		if err != nil { return fmt.Errorf("Failed to open file: %s\n", err) }
 		defer file.Close()
 		reader := csv.NewReader(file)
+		reader.Comma = []rune(separator)[0]
 
 		headers, err := reader.Read()
 		if err != nil { return err }
