@@ -65,7 +65,8 @@ var diffCmd = &cobra.Command{
 		record := headers
 		for {
 
-			should_print := !slices.Contains(right_hashes, util.Hash(record[col_index]))
+			_, exists := right_hashes[util.Hash(record[col_index])]
+			should_print := !exists
 			if (inverse_flag) { should_print = !should_print }
 
 			if should_print {

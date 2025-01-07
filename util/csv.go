@@ -23,7 +23,7 @@ func ProcessCSV(seperator rune, args []string, callback func(reader *csv.Reader)
 		return callback(reader)
 }
 
-func HashCSV(separator rune, column string, path string) ([]uint32, error) {
+func HashCSV(separator rune, column string, path string) (map[uint32]struct{}, error) {
 	file, err := os.Open(path)
 	if err != nil { return nil, fmt.Errorf("Failed to open file: %s\n", err) }
 	defer file.Close()
@@ -36,11 +36,10 @@ func HashCSV(separator rune, column string, path string) ([]uint32, error) {
 	col_index, err := ParseColumnFlag(column, headers)
 	if err != nil { return nil, err }
 
-	var hashes []uint32
+	hashes := make(map[uint32]struct{})
 	record := headers
 	for {
-		hashes = append(hashes, Hash(record[col_index]))
-
+		hashes[Hash(record[col_index])] = struct{}{}
 		record, err = reader.Read()
 		if err != nil && err.Error() == "EOF" { break }
 		if err != nil { return nil, err }
