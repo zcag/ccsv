@@ -4,7 +4,6 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
-	"slices"
 
 	"github.com/zcag/ccsv/util"
 
