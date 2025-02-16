@@ -52,6 +52,7 @@ var diffCmd = &cobra.Command{
 		if err != nil { return fmt.Errorf("Failed to open file: %s\n", err) }
 		defer file.Close()
 		reader := csv.NewReader(file)
+		reader.FieldsPerRecord = -1
 		reader.Comma = []rune(separator)[0]
 
 		headers, err := reader.Read()

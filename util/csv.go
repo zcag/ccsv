@@ -19,6 +19,7 @@ func ProcessCSV(seperator rune, args []string, callback func(reader *csv.Reader)
 		}
 
 		reader := csv.NewReader(file)
+		reader.FieldsPerRecord = -1
 		reader.Comma = seperator
 		return callback(reader)
 }
@@ -28,6 +29,7 @@ func HashCSV(separator rune, column string, path string) (map[uint32]struct{}, e
 	if err != nil { return nil, fmt.Errorf("Failed to open file: %s\n", err) }
 	defer file.Close()
 	reader := csv.NewReader(file)
+	reader.FieldsPerRecord = -1
 	reader.Comma = separator
 
 	headers, err := reader.Read()
