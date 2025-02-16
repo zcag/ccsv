@@ -31,8 +31,8 @@ var groupCmd = &cobra.Command{
 
 			regex := regexp.MustCompile(`<(.*)>`)
 			match := regex.FindStringSubmatch(output_pattern)
-			if len(match) != 2 { 
-				return fmt.Errorf("Provide a pattarn with column inside angle brackets. ex: output_<name>.csv") 
+			if len(match) != 2 {
+				return fmt.Errorf("Provide a pattarn with column inside angle brackets. ex: output_<name>.csv")
 			}
 			column, err := util.ParseColumnFlag(match[1], headers)
 			if err != nil { return err }
@@ -50,6 +50,7 @@ var groupCmd = &cobra.Command{
 					file, err := os.Create(filename)
 					if err != nil { return err }
 					writer = csv.NewWriter(file)
+					writer.Comma = []rune(separator)[0]
 
 					if err := writer.Write(headers); err != nil { return err }
 					writer.Flush()

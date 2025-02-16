@@ -63,6 +63,7 @@ var diffCmd = &cobra.Command{
 		if err != nil { return err }
 
 		writer := csv.NewWriter(os.Stdout)
+		writer.Comma = []rune(separator)[0]
 		record := headers
 		for {
 

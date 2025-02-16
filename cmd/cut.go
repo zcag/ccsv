@@ -32,6 +32,7 @@ ccsv cut -c id -c 5 -c age some.csv`,
 			if err != nil { return err }
 
 			writer := csv.NewWriter(os.Stdout)
+			writer.Comma = []rune(separator)[0]
 
 			record := headers
 			for {

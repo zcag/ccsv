@@ -31,6 +31,7 @@ var matchCmd = &cobra.Command{
 			if err != nil { return err }
 
 			writer := csv.NewWriter(os.Stdout)
+			writer.Comma = []rune(separator)[0]
 			if err := writer.Write(headers); err != nil { return err }
 			writer.Flush()
 
